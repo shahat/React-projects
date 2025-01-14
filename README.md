@@ -1,4 +1,3 @@
-- in this project i practice on the react portals , react useImperative hook , useRef
 - please download the code and run the following command inside the project directory
 - npm i 
 - npm run dev
