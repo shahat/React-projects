@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect ,useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Places from "./components/Places.jsx";
 import { AVAILABLE_PLACES } from "./data.js";
 import Modal from "./components/Modal.jsx";
@@ -7,10 +7,10 @@ import logoImg from "./assets/logo.png";
 import { sortPlacesByDistance } from "./loc.js";
 
 const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
-const storedPlaces = storedIds.map((id) =>
-  AVAILABLE_PLACES.find((place) => place.id === id)
-);
 
+const storedPlaces = storedIds
+  .map((id) => AVAILABLE_PLACES.find((place) => place.id === id))
+  .filter(Boolean);
 
 function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -32,15 +32,14 @@ function App() {
 
   function handleStartRemovePlace(id) {
     selectedPlace.current = id;
-   setModalIsOpen(true);
+    setModalIsOpen(true);
   }
 
   function handleStopRemovePlace() {
-   setModalIsOpen(false);
+    setModalIsOpen(false);
   }
 
   function handleSelectPlace(id) {
-    
     setPickedPlaces((prevPickedPlaces) => {
       if (prevPickedPlaces.some((place) => place.id === id)) {
         return prevPickedPlaces;
@@ -49,26 +48,29 @@ function App() {
       return [place, ...prevPickedPlaces];
     });
 
-    // update the local storage 
-  const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
+    // update the local storage
+    const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
     if (storedIds.indexOf(id) === -1) {
-      localStorage.setItem("selectedPlaces", JSON.stringify([id, 
-         ...storedIds
-      ]));
+      localStorage.setItem(
+        "selectedPlaces",
+        JSON.stringify([id, ...storedIds])
+      );
     }
   }
-// useCallback function make sure that the function is not recreated on every render
-// also it has a depenancy array to determine when the function should be recreated
-   const handleRemovePlace = useCallback(function handleRemovePlace() {
+  // useCallback function make sure that the function is not recreated on every render
+  // also it has a depenancy array to determine when the function should be recreated
+  const handleRemovePlace = useCallback(function handleRemovePlace() {
     setPickedPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
     setModalIsOpen(false);
     // update the places in the local storage
     const storedIds = JSON.parse(localStorage.getItem("selectedPlaces")) || [];
-    localStorage.setItem("selectedPlaces",JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current))
+    localStorage.setItem(
+      "selectedPlaces",
+      JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current))
     );
-  } , []);
+  }, []);
 
   return (
     <>
