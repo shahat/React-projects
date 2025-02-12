@@ -1,36 +1,26 @@
-import { useRef, useState, useCallback , useEffect} from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 
 import Places from "./components/Places.jsx";
 import Modal from "./components/Modal.jsx";
 import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
 import logoImg from "./assets/logo.png";
 import AvailablePlaces from "./components/AvailablePlaces.jsx";
-import { updateUserPlaces , fetchUserPlaces } from "./http.js";
+import { updateUserPlaces, fetchUserPlaces } from "./http.js";
+import Error from "./components/Error.jsx";
+import { useFetch } from "./hooks/useFetch.js";
 
 function App() {
   const selectedPlace = useRef();
-  const [userPlaces, setUserPlaces] = useState([]);
-  
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [errorUpdatingPlaces, setErrorUpdatingPlaces] = useState(null);
 
-  useEffect(() => {
-    async function fetchUserPlacesHandler() {
-      setIsLoading(true);
-      try {
-        const places = await fetchUserPlaces();
-        setUserPlaces(places);
-      } catch (error) {
-        setError({ message: error.message || "Failed to fetch user places." });
-      }
-      setIsLoading(false);
-    }
-    fetchUserPlacesHandler();
-  }, []);
-
+  // use the custome hook
+  const {
+    fetchedData:userPlaces,
+    isFetching: isLoading,
+    error,
+    setFetchedData: setUserPlaces,
+  } = useFetch(fetchUserPlaces, []);
 
   // handle start remove
   function handleStartRemovePlace(place) {
@@ -42,7 +32,7 @@ function App() {
     setModalIsOpen(false);
   }
 
-  // handle select place
+  //handle select place
   async function handleSelectPlace(selectedPlace) {
     setUserPlaces((prevPickedPlaces) => {
       if (!prevPickedPlaces) {
@@ -64,13 +54,12 @@ function App() {
     }
   }
   // handle remove place
-  //  again her i'm doing optimistic update 
+  // again her i'm doing optimistic update
 
   const handleRemovePlace = useCallback(async function handleRemovePlace() {
     setUserPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
     );
-
     try {
       await updateUserPlaces(
         userPlaces.filter((place) => place.id !== selectedPlace.current.id)
@@ -91,16 +80,15 @@ function App() {
 
   return (
     <>
-  
-   <Modal open={errorUpdatingPlaces} onConfirm={handleCloseError}>
-    { errorUpdatingPlaces && <Error
-     title="An error occurred!"
-     message={errorUpdatingPlaces.message}
-     onConfirm={handleCloseError}
-   />  }
- </Modal>
-  
-   
+      <Modal open={errorUpdatingPlaces} onConfirm={handleCloseError}>
+        {errorUpdatingPlaces && (
+          <Error
+            title="An error occurred!"
+            message={errorUpdatingPlaces.message}
+            onConfirm={handleCloseError}
+          />
+        )}
+      </Modal>
 
       <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
         <DeleteConfirmation
@@ -117,16 +105,18 @@ function App() {
         </p>
       </header>
       <main>
-       { error && <Error title="An error occurred!" message={error.message} />} 
-       {!error && <Places
-          title="I'd like to visit ..."
-          fallbackText="Select the places you would like to visit below."
-          isLoading={ isLoading}
-          loadingText="Loading your places..."  
-          places={userPlaces}
-          onSelectPlace={handleStartRemovePlace}
-        />
-        }
+        {error && <Error title="An error occurred!" message={error.message} />}
+        {!error && (
+          <Places
+            title="I'd like to visit ..."
+            fallbackText="Select the places you would like to visit below."
+            isLoading={isLoading}
+            loadingText="Loading your places..."
+            places={userPlaces}
+            onSelectPlace={handleStartRemovePlace}
+          />
+        )}
+
         <AvailablePlaces onSelectPlace={handleSelectPlace} />
       </main>
     </>
