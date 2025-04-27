@@ -37,5 +37,10 @@ export const action = async ({ request }) => {
   const resData = await response.json();
   const token = resData.token;
   localStorage.setItem('token', token);
+  // once you set the token in the front end you set the expiration date : 
+  
+  const expiration = new Date();
+  expiration.setHours(expiration.getHours() + 1);
+  localStorage.setItem('expiration', expiration.toISOString()); 
    return redirect('/');
 }
