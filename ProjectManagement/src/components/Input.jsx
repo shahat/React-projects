@@ -1,18 +1,25 @@
-import React from "react";
-function Input({ label, textarea , ...props  },ref ) {
-  const classes =
-    "w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600 min-h-[40px]";
+import React from 'react';
+
+function Input({ label, error, className = '', ...props }) {
   return (
-    <p className="flex flex-col gap-1 my-4">
-      <label className="text-sm font-bold uppercase text-stone-500">
-        {label}
-      </label>
-      {textarea ? (
-        <textarea ref={ref} className={classes} {...props} />
-      ) : (
-        <input ref={ref} className={classes} {...props} />
+    <div className="flex flex-col gap-1">
+      {label && (
+        <label className="text-sm font-bold uppercase text-stone-500 tracking-wide">
+          {label}
+        </label>
       )}
-    </p>
+      <input
+        className={`w-full px-4 py-3 border-2 rounded-lg bg-stone-50 text-stone-700 placeholder-stone-400 focus:outline-none transition-colors ${
+          error 
+            ? 'border-red-300 focus:border-red-400' 
+            : 'border-stone-200 focus:border-stone-400'
+        } ${className}`}
+        {...props}
+      />
+      {error && (
+        <p className="text-red-500 text-xs mt-1">{error}</p>
+      )}
+    </div>
   );
 }
 
