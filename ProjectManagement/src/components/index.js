@@ -1,7 +1,11 @@
-import Input from "./Input";
-import Modal from "./Modal";
-import ProjectSidebar from "./ProjectSidebar";
-import NoProjectSelected from "./NoProjectSelected";
-import Button from "./Button";
-import NewProject from "./NewProject";
-export { Input, Modal, ProjectSidebar, NoProjectSelected, Button, NewProject };
+export { default as Button } from './Button';
+export { default as Input } from './Input';
+export { default as Modal } from './Modal';
+export { default as ProjectSidebar } from './ProjectSidebar';
+export { default as NoProjectSelected } from './NoProjectSelected';
+export { default as NewProject } from './NewProject';
+export { default as EditProject } from './EditProject';
+export { default as SelectedProject } from './SelectedProject';
+export { default as Tasks } from './Tasks';
+export { default as NewTask } from './NewTask';
+export { default as ThemeToggle } from './ThemeToggle';

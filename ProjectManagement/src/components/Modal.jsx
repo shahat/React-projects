@@ -1,32 +1,48 @@
-import React, { useImperativeHandle, forwardRef, useRef } from "react";
-import { createPortal } from "react-dom";
-import Button from "./Button";
-const Modal = forwardRef(function Modal({ children, buttonCaption }, ref) {
-  const modalRef = useRef();
-  // make the imperative handle to make these methods accessable outside to the component
-  useImperativeHandle(ref, () => {
-    return {
-      open() {
-        modalRef.current.showModal();
-      },
-      close() {
-        modalRef.current.close();
-      },
-    };
-  });
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
-  // using create portal to render the modal inside the modal root
+function Modal({ isOpen, onClose, title, children }) {
+  const modalRef = useRef();
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return createPortal(
-    <dialog
-      ref={modalRef}
-      className="backdrop:bg-stone-900/90 p-4 rounded-md shadow-md"
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
     >
-      {children}
-      <form method="dialog" className="mt-4 text-right">
-        <Button> {buttonCaption}</Button>
-      </form>
-    </dialog>,
-    document.getElementById("modal-root")
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm" />
+      
+      {/* Modal Content */}
+      <div 
+        ref={modalRef}
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg md:max-w-xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {title && (
+          <div className="px-5 py-4 border-b border-stone-200 bg-stone-50 rounded-t-2xl sticky top-0">
+            <h3 className="text-lg font-semibold text-stone-800">{title}</h3>
+          </div>
+        )}
+        <div className="p-5">
+          {children}
+        </div>
+      </div>
+    </div>,
+    document.getElementById('modal-root')
   );
-});
+}
+
 export default Modal;

@@ -1,10 +1,14 @@
-import React from "react";
-function Button({ children , ...props}) {
+import React from 'react';
+
+function Button({ children, className = '', ...props }) {
   return (
-    <button className="  text-left px-2 py-1 rounded-md   hover:text-stone-200
-     bg-stone-700 text-stone-400  hover:bg-stone-800" {...props}>
+    <button 
+      className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${className}`}
+      {...props}
+    >
       {children}
     </button>
   );
 }
+
 export default Button;
